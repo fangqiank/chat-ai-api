@@ -114,6 +114,7 @@ app.post("/chat", async (req: Request, res: Response): Promise<any> => {
       return res.status(404).json({message: "User not found in database"});
     }
 
+    // Fetch users past messages for context
     const chatHistory = await db
       .select()
       .from(chats)
@@ -121,6 +122,7 @@ app.post("/chat", async (req: Request, res: Response): Promise<any> => {
       .orderBy(chats.createdAt)
       .limit(10);
 
+    // Format chat history for Open AI
     const conversationHistory: ChatCompletionMessageParam[] =
       chatHistory.flatMap((chat) => [
         {role: "user", content: chat.message},
